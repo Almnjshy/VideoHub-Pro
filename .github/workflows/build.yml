@@ -1,0 +1,273 @@
+# VideoHub Pro Enterprise — Build & Release Workflow
+# سير عمل بناء وإصدار التطبيق
+#
+# هذا الـ workflow يقوم بـ:
+#  1. فحص الكود (Lint + Type Check)
+#  2. بناء تطبيق الإنتاج (Production Build)
+#  3. تصدير الملفات الثابتة (Static Export)
+#  4. رفع النتيجة كـ Artifact قابل للتنزيل
+#  5. إنشاء Release تلقائي عند دمج tag
+
+name: Build & Release
+
+on:
+  push:
+    branches: [main, master]
+    tags: ['v*']
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+env:
+  NODE_VERSION: '20'
+  BUN_VERSION: '1.1'
+
+jobs:
+  # ============ Job 1: Quality Checks ============
+  quality:
+    name: 🔍 Quality Checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔄 Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: 📦 Install dependencies
+        run: bun install
+
+      - name: 🔍 Run ESLint
+        run: bun run lint
+
+      - name: 🔍 Type check
+        run: bunx tsc --noEmit
+
+  # ============ Job 2: Build ============
+  build:
+    name: 🏗️ Build Application
+    runs-on: ubuntu-latest
+    needs: quality
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔄 Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: 📦 Install dependencies
+        run: bun install
+
+      - name: 🗄️ Setup database
+        env:
+          DATABASE_URL: "file:/tmp/videohub.db"
+        run: |
+          mkdir -p /tmp
+          bunx prisma generate
+          bunx prisma db push --accept-data-loss
+
+      - name: 🏗️ Build production bundle
+        env:
+          DATABASE_URL: "file:/tmp/videohub.db"
+          NODE_ENV: production
+        run: bun run build
+
+      - name: 📦 Package standalone server
+        run: |
+          mkdir -p release
+          cp -r .next/standalone release/server
+          cp -r .next/static release/server/.next/static
+          cp -r public release/server/public
+          cp package.json release/
+          cp README.md release/ 2>/dev/null || true
+
+          # Create startup script
+          cat > release/start.sh << 'EOF'
+          #!/bin/bash
+          # VideoHub Pro Enterprise — Startup Script
+          export NODE_ENV=production
+          export DATABASE_URL="file:./data/videohub.db"
+          mkdir -p data
+          node server/server.js
+          EOF
+          chmod +x release/start.sh
+
+          # Create archive
+          tar -czf videohub-pro-standalone.tar.gz -C release .
+          zip -r videohub-pro-standalone.zip release/
+
+      - name: 📊 Generate build info
+        run: |
+          cat > release/BUILD_INFO.md << EOF
+          # VideoHub Pro Enterprise — Build Info
+
+          - **Build Date**: $(date -u '+%Y-%m-%d %H:%M:%S UTC')
+          - **Git Commit**: ${{ github.sha }}
+          - **Git Branch**: ${{ github.ref_name }}
+          - **Node Version**: ${{ env.NODE_VERSION }}
+          - **Bun Version**: ${{ env.BUN_VERSION }}
+          - **Build Number**: ${{ github.run_number }}
+
+          ## How to run
+
+          \`\`\`bash
+          # Extract
+          tar -xzf videohub-pro-standalone.tar.gz
+          cd release
+
+          # Start the server
+          ./start.sh
+
+          # Or manually:
+          export NODE_ENV=production
+          export DATABASE_URL="file:./data/videohub.db"
+          mkdir -p data
+          node server/server.js
+          \`\`\`
+
+          The app will be available at http://localhost:3000
+          EOF
+
+      - name: 📤 Upload standalone artifact (tar.gz)
+        uses: actions/upload-artifact@v4
+        with:
+          name: videohub-pro-standalone-${{ github.run_number }}
+          path: videohub-pro-standalone.tar.gz
+          retention-days: 30
+
+      - name: 📤 Upload standalone artifact (zip)
+        uses: actions/upload-artifact@v4
+        with:
+          name: videohub-pro-standalone-${{ github.run_number }}-zip
+          path: videohub-pro-standalone.zip
+          retention-days: 30
+
+      - name: 📤 Upload build info
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-info-${{ github.run_number }}
+          path: release/BUILD_INFO.md
+          retention-days: 30
+
+  # ============ Job 3: Docker Image ============
+  docker:
+    name: 🐳 Docker Image
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v'))
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+
+      - name: 🔖 Generate Docker tags
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha,prefix=sha-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: 🔄 Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: 📝 Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🏗️ Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # ============ Job 4: Release ============
+  release:
+    name: 🚀 Create Release
+    runs-on: ubuntu-latest
+    needs: [build, docker]
+    if: startsWith(github.ref, 'refs/tags/v')
+    permissions:
+      contents: write
+    steps:
+      - name: 📥 Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: 📦 Prepare release files
+        run: |
+          mkdir -p release-assets
+          find artifacts -name "*.tar.gz" -exec cp {} release-assets/ \;
+          find artifacts -name "*.zip" -exec cp {} release-assets/ \;
+          find artifacts -name "BUILD_INFO.md" -exec cp {} release-assets/ \;
+          ls -la release-assets/
+
+      - name: 🚀 Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: VideoHub Pro Enterprise ${{ github.ref_name }}
+          body: |
+            # 🎬 VideoHub Pro Enterprise ${{ github.ref_name }}
+
+            ## 📥 Downloads
+
+            - **videohub-pro-standalone.tar.gz** — Standalone server (tar.gz)
+            - **videohub-pro-standalone.zip** — Standalone server (zip)
+            - **BUILD_INFO.md** — Build information
+
+            ## 🚀 Quick Start
+
+            ```bash
+            # Extract
+            tar -xzf videohub-pro-standalone.tar.gz
+            cd release
+
+            # Run
+            ./start.sh
+
+            # Open http://localhost:3000
+            ```
+
+            ## 🐳 Docker
+
+            ```bash
+            docker pull ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+            docker run -p 3000:3000 ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+            ```
+
+            ## ✨ Features
+
+            - 📱 Mobile-first responsive design (phone + tablet)
+            - 🔌 14 platform plugins (YouTube, TikTok, Facebook, X, Instagram, etc.)
+            - 🧠 Smart download engine (priority + per-domain + bandwidth limit)
+            - 🎬 Built-in media player (speed control + PiP)
+            - 🛠️ Media workspace (convert/extract/trim/share)
+            - 📋 Clipboard monitor
+            - 🔍 Cross-platform search
+            - 📊 Statistics dashboard
+            - 🎨 3 themes (Dark/Light/AMOLED)
+            - 🌐 Full RTL Arabic support
+          files: release-assets/*
+          draft: false
+          prerelease: false

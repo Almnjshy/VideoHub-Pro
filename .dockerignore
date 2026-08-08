@@ -1,0 +1,21 @@
+# VideoHub Pro Enterprise — .dockerignore
+node_modules
+.next
+.git
+.gitignore
+*.md
+!README.md
+.env*
+!.env.example
+download/
+upload/
+scripts/
+tests/
+.github/
+.vscode/
+.idea/
+*.log
+dev.log
+server.log
+.DS_Store
+Thumbs.db

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">VideoHub Pro</string>
+    <string name="app_name_full">VideoHub Pro Enterprise</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">الرئيسية</string>
+    <string name="nav_downloads">التنزيلات</string>
+    <string name="nav_library">الوسائط</string>
+    <string name="nav_discover">اكتشف</string>
+    <string name="nav_search">بحث</string>
+    <string name="nav_plugins">الوحدات</string>
+    <string name="nav_stats">الإحصائيات</string>
+    <string name="nav_notifications">الإشعارات</string>
+    <string name="nav_settings">الإعدادات</string>
+
+    <!-- Home -->
+    <string name="home_welcome">مرحباً بك</string>
+    <string name="home_active_downloads">التنزيلات النشطة</string>
+    <string name="home_recent_activity">آخر العمليات</string>
+    <string name="home_no_active">لا توجد تنزيلات نشطة</string>
+    <string name="home_storage">التخزين</string>
+    <string name="home_success_rate">معدل النجاح</string>
+    <string name="home_failed">أعطال الوحدات</string>
+    <string name="home_engine_running">المحرك يعمل</string>
+
+    <!-- Share Overlay -->
+    <string name="share_smart_title">مشاركة ذكية</string>
+    <string name="share_received_url">الرابط المستلم</string>
+    <string name="share_detected">متعرف عليها</string>
+    <string name="share_no_plugin">لا توجد وحدة مناسبة لهذا الرابط</string>
+    <string name="share_resolving">جاري تحليل الرابط واستخراج البيانات...</string>
+    <string name="share_choose_quality">اختر الجودة</string>
+    <string name="share_download_video">تنزيل كفيديو</string>
+    <string name="share_download_audio">تنزيل كصوت</string>
+    <string name="share_video_formats">جودات متاحة</string>
+    <string name="share_audio_formats">صيغ متاحة</string>
+    <string name="share_priority">الأولوية</string>
+    <string name="share_priority_high">عالية</string>
+    <string name="share_priority_normal">عادية</string>
+    <string name="share_priority_low">منخفضة</string>
+    <string name="share_start_download">بدء التنزيل</string>
+
+    <!-- Tasks -->
+    <string name="task_queued">في الانتظار</string>
+    <string name="task_resolving">جاري التحليل</string>
+    <string name="task_downloading">قيد التنزيل</string>
+    <string name="task_paused">متوقف</string>
+    <string name="task_completed">مكتمل</string>
+    <string name="task_failed">فشل</string>
+    <string name="task_retrying">إعادة المحاولة</string>
+    <string name="task_pause">إيقاف</string>
+    <string name="task_resume">استئناف</string>
+    <string name="task_retry">إعادة</string>
+    <string name="task_delete">حذف</string>
+    <string name="task_play">تشغيل</string>
+    <string name="task_workspace">مساحة عمل</string>
+    <string name="task_raise_priority">رفع الأولوية</string>
+    <string name="task_lower_priority">خفض الأولوية</string>
+
+    <!-- Downloads Screen -->
+    <string name="downloads_filter_all">الكل</string>
+    <string name="downloads_filter_active">النشطة</string>
+    <string name="downloads_filter_completed">المكتملة</string>
+    <string name="downloads_filter_failed">الفاشلة</string>
+    <string name="downloads_clear_completed">مسح المكتملة</string>
+
+    <!-- Library -->
+    <string name="library_title">مكتبة الوسائط</string>
+    <string name="library_search">ابحث في مكتبتك...</string>
+    <string name="library_category_all">الكل</string>
+    <string name="library_category_video">فيديو</string>
+    <string name="library_category_audio">صوت</string>
+    <string name="library_category_image">صور</string>
+    <string name="library_category_favorites">المفضلة</string>
+    <string name="library_category_recent">حديثة</string>
+    <string name="library_sort_date">التاريخ</string>
+    <string name="library_sort_name">الاسم</string>
+    <string name="library_sort_size">الحجم</string>
+
+    <!-- Plugins -->
+    <string name="plugins_title">الوحدات المثبتة</string>
+    <string name="plugins_test">اختبار</string>
+    <string name="plugins_details">تفاصيل</string>
+    <string name="plugins_healthy">سليم</string>
+    <string name="plugins_degraded">متدهور</string>
+    <string name="plugins_broken">معطل</string>
+    <string name="plugins_last_test">آخر اختبار</string>
+    <string name="plugins_next_test">الاختبار التالي</string>
+    <string name="plugins_fault_reports">تقارير الأعطال</string>
+    <string name="plugins_auto_test_results">نتائج الاختبارات التلقائية</string>
+
+    <!-- Settings -->
+    <string name="settings_default_quality">الجودة الافتراضية</string>
+    <string name="settings_default_media_type">نوع الوسائط الافتراضي</string>
+    <string name="settings_concurrency">التزامن والتنزيلات المتوازية</string>
+    <string name="settings_per_domain">حد المنصة الواحدة</string>
+    <string name="settings_smart_scheduling">الجدولة الذكية</string>
+    <string name="settings_bandwidth_limit">حد النطاق الترددي</string>
+    <string name="settings_auto_retry">إعادة المحاولة التلقائية</string>
+    <string name="settings_storage">التخزين</string>
+    <string name="settings_download_path">مسار التنزيل</string>
+    <string name="settings_storage_limit">حد التخزين (GB)</string>
+    <string name="settings_notifications">الإشعارات</string>
+    <string name="settings_enable_notifications">إشعارات النظام</string>
+    <string name="settings_request_notification_permission">طلب إذن الإشعارات</string>
+    <string name="settings_theme">المظهر واللغة</string>
+    <string name="settings_theme_dark">داكنة</string>
+    <string name="settings_theme_light">فاتحة</string>
+    <string name="settings_theme_amoled">AMOLED</string>
+    <string name="settings_accent_color">اللون المميز</string>
+    <string name="settings_language">اللغة</string>
+    <string name="settings_language_ar">العربية</string>
+    <string name="settings_language_en">English</string>
+    <string name="settings_smart_mode">الوضع الذكي Smart Mode</string>
+
+    <!-- Notifications -->
+    <string name="notif_channel_downloads">التنزيلات</string>
+    <string name="notif_channel_downloads_desc">إشعارات تقدم التنزيل</string>
+    <string name="notif_channel_events">الأحداث</string>
+    <string name="notif_channel_events_desc">إشعارات اكتمال/فشل التنزيل</string>
+    <string name="notif_channel_plugins">الوحدات</string>
+    <string name="notif_channel_plugins_desc">إشعارات تدهور أو تحديث الوحدات</string>
+
+    <!-- Download Service -->
+    <string name="download_service_title">جاري التنزيل...</string>
+    <string name="download_service_active_count">%1$d تنزيلات نشطة</string>
+
+    <!-- Permissions -->
+    <string name="perm_notification_title">إذن الإشعارات</string>
+    <string name="perm_notification_desc">يلزم لإظهار تقدم التنزيل في الإشعارات</string>
+    <string name="perm_storage_title">إذن التخزين</string>
+    <string name="perm_storage_desc">يلزم لحفظ الملفات المنزّلة</string>
+
+    <!-- Common -->
+    <string name="cancel">إلغاء</string>
+    <string name="ok">موافق</string>
+    <string name="save">حفظ</string>
+    <string name="apply">تطبيق</string>
+    <string name="loading">جاري التحميل...</string>
+    <string name="error_generic">حدث خطأ</string>
+    <string name="empty_list">لا توجد عناصر</string>
+</resources>

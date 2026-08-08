@@ -1,0 +1,171 @@
+// VideoHub Pro Enterprise — Prisma Schema
+// قاعدة البيانات الخلفية الحقيقية
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============ Tasks ============
+// سجل المهام الكامل — يُخزَّن في قاعدة البيانات ليبقى بعد إعادة التشغيل
+
+model Task {
+  id              String   @id @default(cuid())
+  sourceUrl       String
+  platformId      String
+  title           String
+  author          String?
+  thumbnailUrl    String?
+  durationSeconds Int?
+  description     String?
+
+  // Selected format
+  formatId        String
+  formatQuality   String
+  formatExt       String
+  formatSizeBytes BigInt
+  formatMediaType String
+
+  // State
+  status          String   @default("queued") // queued, downloading, paused, completed, failed, retrying
+  progress        Float    @default(0)
+  downloadedBytes BigInt   @default(0)
+  totalBytes      BigInt
+  speedBps        BigInt   @default(0)
+  etaSeconds      Int      @default(0)
+  retries         Int      @default(0)
+  maxRetries      Int      @default(3)
+  priority        Int      @default(1) // 0=high, 1=normal, 2=low
+
+  // Error info
+  error           String?
+  errorStage      String?
+
+  // Output
+  outputPath      String?
+
+  // Segments (JSON)
+  segmentsJson    String
+
+  createdAt       DateTime @default(now())
+  startedAt       DateTime?
+  completedAt     DateTime?
+  updatedAt       DateTime @updatedAt
+
+  @@index([status])
+  @@index([platformId])
+  @@index([priority])
+}
+
+// ============ Plugins ============
+// سجل الوحدات المثبتة + حالتها الصحية
+
+model Plugin {
+  id                String   @id
+  name              String
+  nameAr            String
+  icon              String
+  color             String
+  version           String
+  enabled           Boolean  @default(true)
+
+  // Health metrics
+  totalAttempts     Int      @default(0)
+  successfulAttempts Int     @default(0)
+  failedAttempts    Int      @default(0)
+  successRate       Float    @default(1.0)
+  status            String   @default("healthy") // healthy, degraded, broken
+  lastErrorJson     String?
+  lastSuccessAt     DateTime?
+  lastAutoTestAt    DateTime?
+  nextAutoTestAt    DateTime?
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+// ============ Fault Reports ============
+
+model FaultReport {
+  id          String   @id @default(cuid())
+  pluginId    String
+  stage       String   // identify, fetch_metadata, resolve_links, download_segment, merge, finalize
+  errorType   String   // network, parsing, auth, source_changed, rate_limit, unknown
+  message     String
+  taskId      String?
+  resolved    Boolean  @default(false)
+  timestamp   DateTime @default(now())
+
+  @@index([pluginId])
+  @@index([timestamp])
+}
+
+// ============ Auto Test Results ============
+
+model AutoTestResult {
+  id          String   @id @default(cuid())
+  pluginId    String
+  testName    String
+  passed      Boolean
+  durationMs  Int
+  error       String?
+  timestamp   DateTime @default(now())
+
+  @@index([pluginId])
+  @@index([timestamp])
+}
+
+// ============ App Stats (singleton-like) ============
+
+model AppStat {
+  id                    String   @id @default("singleton")
+  totalDownloads        Int      @default(0)
+  completedDownloads    Int      @default(0)
+  failedDownloads       Int      @default(0)
+  totalBytesDownloaded  BigInt   @default(0)
+  averageSpeed          BigInt   @default(0)
+  storageUsedBytes      BigInt   @default(0)
+  storageLimitBytes     BigInt   @default(34359738368) // 32 GB default
+  fileCount             Int      @default(0)
+  updatedAt             DateTime @updatedAt
+}
+
+// ============ Notifications ============
+
+model Notification {
+  id          String   @id @default(cuid())
+  type        String   // task_completed, task_failed, plugin_broken, plugin_degraded, share_received, storage_warning
+  title       String
+  message     String
+  taskId      String?
+  pluginId    String?
+  read        Boolean  @default(false)
+  timestamp   DateTime @default(now())
+
+  @@index([read])
+  @@index([timestamp])
+}
+
+// ============ Settings (singleton) ============
+
+model Setting {
+  id                    String   @id @default("singleton")
+  defaultQuality        String   @default("1080p")
+  defaultMediaType      String   @default("video")
+  concurrentDownloads   Int      @default(3)
+  concurrentPerDomain   Int      @default(2)
+  downloadPath          String   @default("/storage/VideoHub/")
+  autoRetry             Boolean  @default(true)
+  maxRetries            Int      @default(3)
+  notificationsEnabled  Boolean  @default(true)
+  storageLimitGb        Int      @default(32)
+  smartScheduling       Boolean  @default(true)
+  bandwidthLimitMbps    Int      @default(0) // 0 = unlimited
+  theme                 String   @default("dark")
+  language              String   @default("ar")
+  updatedAt             DateTime @updatedAt
+}

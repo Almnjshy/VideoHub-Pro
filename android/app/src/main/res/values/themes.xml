@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Base Theme (Dark by default) -->
+    <!-- Using Theme.Material3.Dark (parent exists in Material Components 1.12.0)
+         and explicitly disabling ActionBar/Title for NoActionBar behavior -->
+    <style name="Theme.VideoHubPro" parent="Theme.Material3.Dark">
+        <!-- NoActionBar behavior -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+
+        <!-- System bars -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">false</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+
+        <!-- Brand colors -->
+        <item name="android:colorPrimary">@color/amber_primary</item>
+        <item name="android:colorAccent">@color/amber_primary</item>
+        <item name="android:windowBackground">@color/dark_bg_primary</item>
+    </style>
+
+    <!-- Splash Theme — parent provided by androidx.core:core-splashscreen -->
+    <style name="Theme.VideoHubPro.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/dark_bg_primary</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_launcher_foreground</item>
+        <item name="postSplashScreenTheme">@style/Theme.VideoHubPro</item>
+    </style>
+
+    <!-- Light Theme (alternative) -->
+    <style name="Theme.VideoHubPro.Light" parent="Theme.Material3.Light">
+        <!-- NoActionBar behavior -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+
+        <!-- System bars -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="o_mr1">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+
+        <!-- Brand colors -->
+        <item name="android:colorPrimary">@color/amber_primary</item>
+        <item name="android:colorAccent">@color/amber_primary</item>
+        <item name="android:windowBackground">@color/light_bg_primary</item>
+    </style>
+</resources>

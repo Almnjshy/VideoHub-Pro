@@ -1,0 +1,107 @@
+User: جيد الان اعمل تقرير بجميع الاخطاء من البداية كي اعطيها للأداة كي تصلحها
+Kimi: هذا تقرير شامل بجميع الأخطاء التي ظهرت في عمليات البناء المتتالية:
+
+---
+
+## تقرير أخطاء البناء — VideoHub Pro Android
+
+### الخطأ الأول: Hilt + JavaPoet (تم حله)
+
+| البند | التفاصيل |
+|-------|---------|
+| **المهمة** | `:app:hiltAggregateDepsDebug` |
+| **الخطأ** | `java.lang.NoSuchMethodError: 'java.lang.String com.squareup.javapoet.ClassName.canonicalName()'` |
+| **السبب** | Hilt 2.51.1 يتطلب JavaPoet 1.13.0+، لكن `androidx.hilt:hilt-compiler:1.2.0` يجلب إصدارًا أقدم |
+| **الحل** | تحديث Hilt إلى 2.55 + إضافة `resolutionStrategy` لفرض JavaPoet 1.13.0 |
+
+---
+
+### الخطأ الثاني: VideoHubApp — WorkManager Configuration
+
+| البند | التفاصيل |
+|-------|---------|
+| **الملف** | `VideoHubApp.kt` |
+| **الخطأ** | `Class 'VideoHubApp' is not abstract and does not implement abstract member 'workManagerConfiguration'` |
+| **السبب** | `Configuration.Provider` في WorkManager 2.10.0 تتطلب **خاصية** `workManagerConfiguration` وليست دالة `getWorkManagerConfiguration()` |
+| **الحل** | استخدام `override val workManagerConfiguration: Configuration` |
+
+---
+
+### الخطأ الثالث: أيقونة Plug غير موجودة
+
+| البند | التفاصيل |
+|-------|---------|
+| **الملفات** | `MainActivity.kt` (سطر 33، 198) — `NotificationsScreen.kt` (سطر 24، 114، 115) |
+| **الخطأ** | `Unresolved reference 'Plug'` — `Icons.Default.Plug` |
+| **السبب** | أيقونة `Plug` غير موجودة في Material Icons الافتراضية |
+| **الحل** | استبدال بـ `Icons.Default.Extension` |
+
+---
+
+### الخطأ الرابع: لون EmeraldSuccess غير مُستورد
+
+| البند | التفاصيل |
+|-------|---------|
+| **الملف** | `LibraryScreen.kt` (سطر 182) |
+| **الخطأ** | `Unresolved reference 'EmeraldSuccess'` |
+| **السبب** | اللون مُعرّف في `Color.kt` لكن غير مُستورد في الملف |
+| **الحل** | إضافة `import com.videohub.pro.ui.theme.EmeraldSuccess` |
+
+---
+
+### الخطأ الخامس: Destructuring في NotificationsScreen
+
+| البند | التفاصيل |
+|-------|---------|
+| **الملف** | `NotificationsScreen.kt` (سطر 109-117) |
+| **الخطأ** | `Function 'component1()' is ambiguous` + `Argument type mismatch` |
+| **السبب** | استخدام destructuring `val (icon, color) = when(...)` على `Pair` داخل `when` يسبب غموضًا للمترجم |
+| **الحل** | استخدام متغير `Pair` صريح + استخراج `first` و `second` |
+
+---
+
+### الخطأ السادس: أيقونة CheckCircle غير مُستوردة
+
+| البند | التفاصيل |
+|-------|---------|
+| **الملف** | `SettingsScreen.kt` (سطر 233) |
+| **الخطأ** | `Unresolved reference 'CheckCircle'` |
+| **السبب** | `Icons.Default.CheckCircle` غير مُستورد |
+| **الحل** | إضافة `import androidx.compose.material.icons.filled.CheckCircle` |
+
+---
+
+### الخطأ السابع: حقل qualityLabel غير موجود
+
+| البند | التفاصيل |
+|-------|---------|
+| **الملف** | `LibraryScreen.kt` (سطر 229) |
+| **الخطأ** | `Unresolved reference 'qualityLabel'` |
+| **السبب** | الكيان `TaskEntity` يحتوي على `formatQuality` وليس `qualityLabel` |
+| **الحل** | تغيير `task.qualityLabel` إلى `task.formatQuality` |
+
+---
+
+## ملخص الملفات المعدلة
+
+| # | الملف | عدد الأخطاء | التغيير الرئيسي |
+|---|-------|------------|-----------------|
+| 1 | `gradle/libs.versions.toml` | — | `hilt = "2.55"` + `javapoet = "1.13.0"` |
+| 2 | `build.gradle.kts` | — | `resolutionStrategy.force` لـ JavaPoet و Dagger |
+| 3 | `app/build.gradle.kts` | — | `constraints` + `resolutionStrategy` |
+| 4 | `VideoHubApp.kt` | 2 | `override val workManagerConfiguration` |
+| 5 | `MainActivity.kt` | 2 | `Icons.Default.Extension` بدل `Plug` |
+| 6 | `LibraryScreen.kt` | 2 | `import EmeraldSuccess` + `formatQuality` |
+| 7 | `NotificationsScreen.kt` | 8 | `Extension` + إصلاح destructuring |
+| 8 | `SettingsScreen.kt` | 1 | `import CheckCircle` |
+
+---
+
+## ملاحظة للأداة
+
+جميع الأخطاء ناتجة عن:
+1. **عدم توافق الإصدارات** بين Hilt و JavaPoet
+2. **استخدام API خاطئ** (WorkManager property vs function)
+3. **مراجعات غير موجودة** (أيقونات وألوان غير مُستوردة)
+4. **أخطاء تركيب Kotlin** (destructuring ambiguous)
+5. **حقول كيان خاطئة** (اسم حقل غير مطابق لقاعدة البيانات)
