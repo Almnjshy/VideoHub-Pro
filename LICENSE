@@ -1,0 +1,36 @@
+MIT License
+
+Copyright (c) 2026 VideoHub Pro
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+Third-party licenses:
+
+- yt-dlp: https://github.com/yt-dlp/yt-dlp/blob/master/LICENSE (Unlicense)
+- FFmpeg: https://ffmpeg.org/legal.html (LGPL/GPL)
+- Chaquopy: https://github.com/chaquo/chaquopy/blob/master/LICENSE (MIT)
+- ffmpeg-kit: https://github.com/arthenica/ffmpeg-kit (LGPL)
+- Coil: https://github.com/coil-kt/coil/blob/main/LICENSE.txt (Apache 2.0)
+- OkHttp: https://github.com/square/okhttp/blob/master/LICENSE.txt (Apache 2.0)
+- Hilt: https://github.com/google/dagger/blob/master/LICENSE (Apache 2.0)
+- Jetpack Compose: https://developer.android.com/jetpack/compose (Apache 2.0)
+- Room: https://developer.android.com/training/data-storage/room (Apache 2.0)
+- ExoPlayer (Media3): https://github.com/androidx/media (Apache 2.0)

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Brand Colors (matching web app) -->
+    <color name="amber_primary">#F59E0B</color>
+    <color name="amber_light">#FCD34D</color>
+    <color name="amber_dark">#D97706</color>
+
+    <color name="emerald_success">#10B981</color>
+    <color name="red_error">#EF4444</color>
+    <color name="blue_info">#3B82F6</color>
+
+    <!-- Dark Theme -->
+    <color name="dark_bg_primary">#09090B</color>
+    <color name="dark_bg_secondary">#18181B</color>
+    <color name="dark_bg_card">#27272A</color>
+    <color name="dark_text_primary">#FAFAFA</color>
+    <color name="dark_text_secondary">#A1A1AA</color>
+    <color name="dark_text_tertiary">#71717A</color>
+    <color name="dark_border">#27272A</color>
+
+    <!-- AMOLED Theme -->
+    <color name="amoled_bg_primary">#000000</color>
+
+    <!-- Light Theme -->
+    <color name="light_bg_primary">#FAFAFA</color>
+    <color name="light_bg_secondary">#F4F4F5</color>
+    <color name="light_bg_card">#FFFFFF</color>
+    <color name="light_text_primary">#18181B</color>
+    <color name="light_text_secondary">#71717A</color>
+    <color name="light_text_tertiary">#A1A1AA</color>
+    <color name="light_border">#E4E4E7</color>
+
+    <!-- Status colors -->
+    <color name="status_queued">#FBBF24</color>
+    <color name="status_downloading">#34D399</color>
+    <color name="status_paused">#A1A1AA</color>
+    <color name="status_completed">#22C55E</color>
+    <color name="status_failed">#F87171</color>
+    <color name="status_retrying">#FB923C</color>
+</resources>
